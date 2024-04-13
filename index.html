@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zip Code Information</title>
+    <style>
+        /* 这里插入前面提供的 CSS 代码 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: calc(100% - 22px);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Find Zip Code Information</h2>
+        <input type="text" id="zipCode" placeholder="Enter Zip Code">
+        <button onclick="getZipCodeInfo()">Get Info</button>
+        <div id="results" class="results"></div>
+    </div>
+    <script>
+        // 这里插入前面提供的 JavaScript 代码
+        function getZipCodeInfo() {
+            const zipCode = document.getElementById('zipCode').value;
+            if (zipCode.length === 5 && !isNaN(zipCode)) {
+                fetch(`https://api.zippopotam.us/us/${zipCode}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Zip code not found');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        displayResults(data);
+                    })
+                    .catch(error => {
+                        document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+                    });
+            } else {
+                document.getElementById('results').innerHTML = '<p>Please enter a valid 5-digit zip code.</p>';
+            }
+        }
+
+        function displayResults(data) {
+            const resultsElement = document.getElementById('results');
+            resultsElement.innerHTML = `
+                <p><strong>Country:</strong> ${data.country}</p>
+                <p><strong>State:</strong> ${data.places[0].state}</p>
+                <p><strong>City:</strong> ${data.places[0]['place name']}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
